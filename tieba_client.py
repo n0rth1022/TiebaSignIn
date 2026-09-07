@@ -3,6 +3,7 @@ import logging
 import random
 import time
 from typing import Optional
+from urllib.parse import quote
 
 import requests
 
@@ -132,7 +133,7 @@ class TiebaClient:
         if result is None:
             logger.error("获取 tbs 失败")
             return None
-        self.logged_in = result.get("is_login") == "1"
+        self.logged_in = str(result.get("is_login")) == "1"
         if not self.logged_in:
             logger.warning("BDUSS 登录状态异常: is_login=%s", result.get("is_login"))
         return result.get("tbs", "")
@@ -233,7 +234,7 @@ class TiebaClient:
             "kw": kw,
             "tbs": tbs,
         }
-        headers = {"Referer": f"https://tieba.baidu.com/f?kw={kw}&fr=home"}
+        headers = {"Referer": f"https://tieba.baidu.com/f?kw={quote(kw)}&fr=home"}
 
         result = self._request(WEB_SIGN_URL, "post", data, headers=headers)
         if result is None:
